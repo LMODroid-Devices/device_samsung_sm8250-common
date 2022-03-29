@@ -50,11 +50,7 @@ TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := generic
 TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a55
 
-# Kernel config
-TARGET_KERNEL_CONFIG        := vendor/kona-sec-perf_defconfig 
-TARGET_KERNEL_SOURCE        := kernel/samsung/sm8250
-
-# Kernel flags
+# Kernel
 BOARD_KERNEL_IMAGE_NAME        := Image
 BOARD_BOOT_HEADER_VERSION      := 2
 BOARD_KERNEL_SEPARATED_DTBO    := true
@@ -65,6 +61,11 @@ BOARD_KERNEL_BASE          := 0x00000000
 BOARD_KERNEL_PAGESIZE      := 4096
 
 BOARD_MKBOOTIMG_ARGS += --header_version $(BOARD_BOOT_HEADER_VERSION)
+
+TARGET_KERNEL_SOURCE := kernel/samsung/sm8250
+TARGET_KERNEL_CONFIG := \
+    vendor/kona-sec-perf_defconfig \
+    vendor/debugfs.config
 
 # Additional root folders
 TARGET_FS_CONFIG_GEN := $(COMMON_PATH)/config.fs
