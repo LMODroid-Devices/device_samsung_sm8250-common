@@ -165,7 +165,6 @@ PRODUCT_PACKAGES += \
     libqdMetaData.system \
     libtinyxml \
     libtinyxml2 \
-    libvulkan \
     vendor.display.config@1.0 \
     vendor.display.config@1.0.vendor \
     vendor.display.config@1.5 \
