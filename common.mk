@@ -92,7 +92,10 @@ PRODUCT_PACKAGES += \
     libreverbwrapper \
     libtinycompress \
     libvisualizer \
-    libvolumelistener
+    libvolumelistener \
+    SamsungDAP
+
+TARGET_EXCLUDES_AUDIOFX := true
 
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/audio/configs/audio_effects.conf:$(TARGET_COPY_OUT_VENDOR)/etc/audio_effects.conf \
@@ -131,10 +134,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     disable_configstore \
     vendor.qti.hardware.capabilityconfigstore@1.0.vendor
-
-# CGroups
-PRODUCT_COPY_FILES += \
-    $(COMMON_PATH)/configs/cgroups.json:$(TARGET_COPY_OUT_VENDOR)/etc/cgroups.json
 
 # GNSS
 PRODUCT_PACKAGES += \
@@ -322,9 +321,6 @@ PRODUCT_PACKAGES += \
 # Perf
 PRODUCT_PACKAGES += \
     libqti-perfd-client
-
-PRODUCT_COPY_FILES += \
-    $(COMMON_PATH)/configs/task_profiles.json:$(TARGET_COPY_OUT_VENDOR)/etc/task_profiles.json
 
 # Permissions
 PRODUCT_COPY_FILES += \
