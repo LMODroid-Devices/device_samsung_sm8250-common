@@ -75,7 +75,6 @@ PRODUCT_PACKAGES += \
     android.hardware.audio@7.0-impl.samsung-sm8250 \
     android.hardware.audio.effect@7.0-impl \
     android.hardware.soundtrigger@2.2-impl \
-    audio_parameter_service.samsung_sm8250 \
     audio.r_submix.default \
     audio.usb.default
 
@@ -243,7 +242,7 @@ PRODUCT_PACKAGES += \
 
 # Lights
 PRODUCT_PACKAGES += \
-    android.hardware.light-service.samsung.sm8250
+    android.hardware.light-service.samsung
 
 # LiveDisplay
 PRODUCT_PACKAGES += \
@@ -278,7 +277,8 @@ PRODUCT_COPY_FILES += \
 
 # Minijail
 PRODUCT_PACKAGES += \
-    libavservices_minijail
+    libavservices_minijail \
+    libavservices_minijail.vendor
 
 # Net
 PRODUCT_PACKAGES += \
@@ -304,9 +304,6 @@ PRODUCT_COPY_FILES += \
 
 # OMX
 PRODUCT_PACKAGES += \
-    android.hardware.media.c2@1.0.vendor \
-    android.hardware.media.c2@1.1.vendor:64 \
-    libstagefright_bufferpool@2.0.1.vendor \
     libmm-omxcore \
     libOmxAacEnc \
     libOmxAmrEnc \
@@ -393,9 +390,12 @@ PRODUCT_COPY_FILES += \
 
 # QMI
 PRODUCT_PACKAGES += \
+    libcurl.vendor \
     libjson \
+    libjsoncpp.vendor \
     libqti_vndfwk_detect \
     libqti_vndfwk_detect.vendor \
+    libsqlite.vendor \
     libvndfwk_detect_jni.qti \
     libvndfwk_detect_jni.qti.vendor
 
@@ -406,13 +406,14 @@ PRODUCT_COPY_FILES += \
 # RIL
 PRODUCT_PACKAGES += \
     android.hardware.broadcastradio@1.0-impl \
-    android.hardware.radio@1.4.vendor \
+    android.hardware.radio@1.5.vendor \
     android.hardware.radio.config@1.2.vendor \
     android.hardware.radio.deprecated@1.0.vendor \
     libxml2 \
     librilutils \
     librmnetctl \
-    secril_config_svc
+    secril_config_svc \
+    sehradiomanager
 
 # Secure Element
 PRODUCT_PACKAGES += \
@@ -480,6 +481,9 @@ PRODUCT_PACKAGES += \
     wpa_cli \
     wpa_supplicant \
     wpa_supplicant.conf
+
+PRODUCT_PACKAGES += \
+    firmware_WCNSS_qcom_cfg.ini_symlink \
 
 PRODUCT_COPY_FILES += \
     $(COMMON_PATH)/configs/wifi/indoorchannel.info:$(TARGET_COPY_OUT_VENDOR)/etc/wifi/indoorchannel.info \

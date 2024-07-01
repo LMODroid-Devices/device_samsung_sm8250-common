@@ -41,7 +41,7 @@ TARGET_NO_BOOTLOADER := true
 
 # Architecture
 TARGET_ARCH := arm64
-TARGET_ARCH_VARIANT := armv8-2a
+TARGET_ARCH_VARIANT := armv8-2a-dotprod
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := generic
@@ -55,6 +55,7 @@ TARGET_2ND_CPU_VARIANT := generic
 TARGET_2ND_CPU_VARIANT_RUNTIME := cortex-a55
 
 # Kernel config
+TARGET_KERNEL_CONFIG        := vendor/kona-sec-perf_defconfig 
 TARGET_KERNEL_SOURCE        := kernel/samsung/sm8250
 TARGET_KERNEL_ARCH          := arm64
 TARGET_KERNEL_HEADER_ARCH   := arm64
@@ -120,9 +121,9 @@ BOARD_SUPER_PARTITION_SIZE                      := 10292822016
 BOARD_SUPER_PARTITION_GROUPS                    := qti_dynamic_partitions
 BOARD_QTI_DYNAMIC_PARTITIONS_PARTITION_LIST     := system vendor product odm
 BOARD_QTI_DYNAMIC_PARTITIONS_SIZE               := 10292822012
-BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE       := 2815142400
+BOARD_SYSTEMIMAGE_PARTITION_RESERVED_SIZE       := 1815142400
 BOARD_VENDORIMAGE_PARTITION_RESERVED_SIZE       := 1815142400
-BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE      := 1815142400
+BOARD_PRODUCTIMAGE_PARTITION_RESERVED_SIZE      := 815142400
 BOARD_ODMIMAGE_PARTITION_RESERVED_SIZE          := 50000000
 BOARD_SYSTEMIMAGE_EXTFS_INODE_COUNT             := -1
 BOARD_VENDORIMAGE_EXTFS_INODE_COUNT             := -1
@@ -160,20 +161,15 @@ BOARD_USES_ALSA_AUDIO := true
 # Camera
 SOONG_CONFIG_NAMESPACES += samsungCameraVars
 SOONG_CONFIG_samsungCameraVars += \
-    needs_sec_reserved_field \
-    extra_ids
+    needs_sec_reserved_field
 
 SOONG_CONFIG_samsungCameraVars_needs_sec_reserved_field := true
-SOONG_CONFIG_samsungCameraVars_extra_ids := 20,21,23,50,52
-
-# Health
-TARGET_HEALTH_CHARGING_CONTROL_CHARGING_PATH := /sys/class/power_supply/battery/batt_slate_mode
-TARGET_HEALTH_CHARGING_CONTROL_CHARGING_ENABLED := 0
-TARGET_HEALTH_CHARGING_CONTROL_CHARGING_DISABLED := 1
-TARGET_HEALTH_CHARGING_CONTROL_SUPPORTS_BYPASS := false
 
 # Keymaster
 TARGET_KEYMASTER_VARIANT := samsung
+
+# Include
+$(call soong_config_set,samsungVars,target_specific_header_path,$(COMMON_PATH)/include)
 
 # Init
 TARGET_INIT_VENDOR_LIB := //$(COMMON_PATH):libinit_samsung_sm8250
@@ -226,13 +222,13 @@ TARGET_RECOVERY_UPDATER_LIBS := librecovery_updater_samsung_sm8250
 TARGET_RELEASETOOLS_EXTENSIONS := $(COMMON_PATH)/releasetools
 
 # Security patch
-VENDOR_SECURITY_PATCH := 2024-03-01
+VENDOR_SECURITY_PATCH := 2024-05-01
 
 # SePolicy
 include device/qcom/sepolicy_vndr/SEPolicy.mk
 BOARD_VENDOR_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/vendor
-SYSTEM_EXT_PUBLIC_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/public
-SYSTEM_EXT_PRIVATE_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/private
+PRODUCT_PUBLIC_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/public
+PRODUCT_PRIVATE_SEPOLICY_DIRS += $(COMMON_PATH)/sepolicy/private
 
 # Wi-Fi
 BOARD_WLAN_DEVICE := qcwcn
