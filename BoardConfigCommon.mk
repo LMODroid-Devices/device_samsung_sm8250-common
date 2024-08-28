@@ -142,13 +142,6 @@ AUDIO_FEATURE_ENABLED_SSR := false
 BOARD_SUPPORTS_SOUND_TRIGGER := true
 BOARD_USES_ALSA_AUDIO := true
 
-# Camera
-SOONG_CONFIG_NAMESPACES += samsungCameraVars
-SOONG_CONFIG_samsungCameraVars += \
-    needs_sec_reserved_field
-
-SOONG_CONFIG_samsungCameraVars_needs_sec_reserved_field := true
-
 # Keymaster
 TARGET_KEYMASTER_VARIANT := samsung
 
