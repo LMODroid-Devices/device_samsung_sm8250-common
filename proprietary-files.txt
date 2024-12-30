@@ -806,23 +806,20 @@ vendor/lib64/libsnaplite_wrapper.so
 vendor/lib64/libsnap_compute.so
 vendor/lib64/libsnap_compute_wrapper.so
 vendor/lib64/libsnap_vndk.so
-
-# Display (SDM) 
-vendor/lib64/libdisp-aba.so
-vendor/lib64/libdpps.so
 vendor/lib64/libmm-hdcpmgr.so
-vendor/lib64/libqseed3.so
-vendor/lib64/libsdm-colormgr-algo.so
-vendor/lib64/libsdm-disp-vndapis.so
-vendor/lib64/libtinyxml2_1.so
 
-# Display (SDM) - from munch-user 13 RKQ1.211001.001 V14.0.3.0.TLMMIXM release-keys
-vendor/lib64/libdisplayqos.so|15701f18257c43be5657bbd867a8acf1f469e373
+# Display (SDM) - from munch-user 14 RKQ1.211001.001 OS1.0.5.0.ULMMIXM release-keys
+vendor/lib64/libdisplayqos.so|56cfe5471e5c282ac83a31e5b155342ade8c08d0
 vendor/lib64/libdisplayskuutils.so|3ddb2ffe55aa9aef686cf3be00ae5e0d1d8f9d93
+vendor/lib64/libdpps.so|aed0ddf27cae0c0d6fed1e27a7b19b1ffeb22002
 vendor/lib64/libhdr_tm.so|4be3cfff1ef40cbc6ad329b79c60881263aa6723
+vendor/lib64/libqseed3.so|c9fb729cf48278d0c87d27c0af17ae3a8ccb1bf7
 vendor/lib64/libsdm-color.so|29cbc16f6fa573d21f48e2be2ff0d51de3357378
+vendor/lib64/libsdm-colormgr-algo.so|1fb7f3cb11557bbf677afb5d6eda0e4e9fd3ac58
 vendor/lib64/libsdm-diag.so|f532f28a93bb8568652579ea97267d3053ad9cfe
+vendor/lib64/libsdm-disp-vndapis.so|fd0b0beac164c92bfa012dbc059cb50cdde2dec6
 vendor/lib64/libsdmextension.so|99377ab065105f0cbd17bbe5907cdbb8027a9f17
+vendor/lib64/libtinyxml2_1.so|fb0a2b16e5cfd28515268edc5c2345190d1ef4e5
 
 # Display-calibration
 vendor/etc/qdcm_calib_data_ss_dsi_panel_EA8079B_AMS646YB01_FHD.xml
@@ -834,6 +831,7 @@ vendor/bin/ppd
 vendor/bin/qdcmss
 vendor/etc/init/qdcmss.rc
 vendor/etc/init/vendor.display.color@1.0-service.rc
+vendor/lib64/libdisp-aba.so
 vendor/lib64/vendor.display.color@1.0.so
 vendor/lib64/vendor.display.color@1.1.so
 vendor/lib64/vendor.display.color@1.2.so
