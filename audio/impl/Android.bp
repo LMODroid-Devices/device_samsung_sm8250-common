@@ -41,6 +41,7 @@ cc_defaults {
         "libmedia_helper",
         "libmediautils_vendor",
         "libmemunreachable",
+        "libtinyalsa",
         "libutils",
         "android.hardware.audio.common-util",
     ],

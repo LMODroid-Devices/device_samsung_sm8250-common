@@ -18,6 +18,7 @@
 #include "core/default/Util.h"
 
 #include <system/audio.h>
+#include <tinyalsa/asoundlib.h>
 
 #include <util/CoreUtils.h>
 
@@ -26,6 +27,41 @@ namespace hardware {
 namespace audio {
 namespace CORE_TYPES_CPP_VERSION {
 namespace implementation {
+
+constexpr int SLOT_POSITIONS_0[] = { 0, 1, 0, 1 };
+constexpr int SLOT_POSITIONS_90[] = { 1, 1, 0, 0 };
+constexpr int SLOT_POSITIONS_180[] = { 1, 0, 1, 0 };
+constexpr int SLOT_POSITIONS_270[] = { 0, 0, 1, 1 };
+
+void setMixerValueByName(mixer *mixer, const char *name, int value) {
+    const auto ctl = mixer_get_ctl_by_name(mixer, name);
+
+    if (ctl == nullptr) {
+        ALOGE("Failed to find mixer ctl for %s", name);
+        return;
+    }
+
+    if (mixer_ctl_set_value(ctl, 0, value) < 0) {
+        ALOGE("Failed to set ctl value %d for %s", value, name);
+        return;
+    }
+}
+
+void setSlotPositions(const int *values) {
+    const auto mixer = mixer_open(0);
+
+    if (mixer == nullptr) {
+        ALOGE("Failed to open mixer");
+        return;
+    }
+
+    setMixerValueByName(mixer, "FL ASPRX1 Slot Position", values[0]);
+    setMixerValueByName(mixer, "FR ASPRX1 Slot Position", values[1]);
+    setMixerValueByName(mixer, "RL ASPRX1 Slot Position", values[2]);
+    setMixerValueByName(mixer, "RR ASPRX1 Slot Position", values[3]);
+
+    mixer_close(mixer);
+};
 
 /** Converts a status_t in Result according to the rules of AudioParameter::get*
  * Note: Static method and not private method to avoid leaking status_t dependency
@@ -51,7 +87,7 @@ Result ParametersUtil::getParam(const char* name, bool* value) {
     Result retval = getParam(name, &halValue);
     *value = false;
     if (retval == Result::OK) {
-        if (halValue.empty()) {
+        if (halValue.length() == 0) {
             return Result::NOT_SUPPORTED;
         }
         *value = !(halValue == AudioParameter::valueOff);
@@ -149,6 +185,17 @@ Result ParametersUtil::setParametersImpl(const hidl_vec<ParameterValue>& context
         if (parameters[i].key == "bt_wbs") {
             params.add(String8("g_sco_samplerate"),
                        String8(parameters[i].value == AudioParameter::valueOn ? "16000" : "8000"));
+        } else if (parameters[i].key == "rotation") {
+            if (parameters[i].value == "0") {
+                setSlotPositions(SLOT_POSITIONS_0);
+            } else if (parameters[i].value == "90") {
+                setSlotPositions(SLOT_POSITIONS_90);
+            } else if (parameters[i].value == "180") {
+                setSlotPositions(SLOT_POSITIONS_180);
+            } else if (parameters[i].value == "270") {
+                setSlotPositions(SLOT_POSITIONS_270);
+            }
+            continue;
         }
         params.add(String8(parameters[i].key.c_str()), String8(parameters[i].value.c_str()));
     }
