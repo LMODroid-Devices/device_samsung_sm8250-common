@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2023 The LineageOS Project
+# Copyright (C) 2023-2025 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -144,9 +144,6 @@ BOARD_USES_ALSA_AUDIO := true
 
 # Keymaster
 TARGET_KEYMASTER_VARIANT := samsung
-
-# Include
-$(call soong_config_set,samsungVars,target_specific_header_path,$(COMMON_PATH)/include)
 
 # HIDL
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
