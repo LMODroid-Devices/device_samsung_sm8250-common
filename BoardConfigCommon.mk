@@ -1,5 +1,5 @@
 #
-# Copyright (C) 2023 The LineageOS Project
+# Copyright (C) 2023-2025 The LineageOS Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ COMMON_PATH := device/samsung/sm8250-common
 
 BUILD_BROKEN_DUP_RULES := true
 BUILD_BROKEN_ELF_PREBUILT_PRODUCT_COPY_FILES := true
-BUILD_BROKEN_INCORRECT_PARTITION_IMAGES := true
 
 # Android Verified Boot
 BOARD_AVB_ENABLE := true
@@ -142,18 +141,8 @@ AUDIO_FEATURE_ENABLED_SSR := false
 BOARD_SUPPORTS_SOUND_TRIGGER := true
 BOARD_USES_ALSA_AUDIO := true
 
-# Camera
-SOONG_CONFIG_NAMESPACES += samsungCameraVars
-SOONG_CONFIG_samsungCameraVars += \
-    needs_sec_reserved_field
-
-SOONG_CONFIG_samsungCameraVars_needs_sec_reserved_field := true
-
 # Keymaster
 TARGET_KEYMASTER_VARIANT := samsung
-
-# Include
-$(call soong_config_set,samsungVars,target_specific_header_path,$(COMMON_PATH)/include)
 
 # HIDL
 DEVICE_FRAMEWORK_COMPATIBILITY_MATRIX_FILE += \
