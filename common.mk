@@ -14,8 +14,6 @@
 # limitations under the License.
 #
 
-DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay
-
 # Setup dalvik vm configs
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
 
@@ -29,8 +27,6 @@ $(call inherit-product, hardware/qcom-caf/common/common.mk)
 # Partitions
 PRODUCT_USE_DYNAMIC_PARTITIONS := true
 
-PRODUCT_ENFORCE_RRO_TARGETS := *
-
 # Shipping API level
 PRODUCT_SHIPPING_API_LEVEL := 29
 
@@ -43,7 +39,6 @@ PRODUCT_PACKAGES += \
     fstab.ramplus \
     init.audio.samsung.rc \
     init.fingerprint.rc \
-    init.nfc.samsung.rc \
     init.qcom.rc \
     init.qcom.recovery.rc \
     init.ramplus.rc \
@@ -53,14 +48,17 @@ PRODUCT_PACKAGES += \
     init.samsung.rc \
     init.target.rc \
     init.vendor.onebinary.rc \
-    init.vendor.rilchip.rc \
-    init.vendor.rilcommon.rc \
     init.vendor.sensors.rc \
     ueventd.qcom.rc \
     wifi_qcom.rc \
     wifi_sec.rc
 
-# Vendor scripts
+ifneq ($(TARGET_IS_WIFI-ONLY),true)
+PRODUCT_PACKAGES += \
+    init.vendor.rilchip.rc \
+    init.vendor.rilcommon.rc
+endif
+
 PRODUCT_PACKAGES += \
     init.class_main.sh \
     init.mdm.sh \
@@ -76,12 +74,11 @@ PRODUCT_PACKAGES += \
     android.hardware.audio.effect@7.0-impl \
     android.hardware.soundtrigger@2.2-impl \
     audio.r_submix.default \
-    audio.usb.default
+    audio.usbv2.default
 
 PRODUCT_PACKAGES += \
     liba2dpoffload \
     libaudiopreprocessing \
-    libaudioroute.vendor \
     libbatterylistener \
     libbundlewrapper \
     libcirrusspkrprot \
@@ -93,7 +90,6 @@ PRODUCT_PACKAGES += \
     libhdmiedid \
     libhfp \
     libldnhncr \
-    libprocessgroup.vendor \
     libqcompostprocbundle \
     libqcomvisualizer \
     libqcomvoiceprocessing \
@@ -116,6 +112,7 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/audio/configs/mixer_usb_default.xml:$(TARGET_COPY_OUT_VENDOR)/etc/mixer_usb_default.xml \
     $(LOCAL_PATH)/audio/configs/sound_trigger_mixer_paths.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sound_trigger_mixer_paths.xml \
     $(LOCAL_PATH)/audio/configs/sound_trigger_platform_info.xml:$(TARGET_COPY_OUT_VENDOR)/etc/sound_trigger_platform_info.xml \
+    $(LOCAL_PATH)/audio/configs/usbv2_audio_policy_configuration.xml:$(TARGET_COPY_OUT_VENDOR)/etc/usbv2_audio_policy_configuration.xml \
     frameworks/av/services/audiopolicy/config/audio_policy_volumes.xml:$(TARGET_COPY_OUT_VENDOR)/etc/audio_policy_volumes.xml \
     frameworks/av/services/audiopolicy/config/bluetooth_audio_policy_configuration_7_0.xml:$(TARGET_COPY_OUT_VENDOR)/etc/bluetooth_audio_policy_configuration_7_0.xml \
     frameworks/av/services/audiopolicy/config/default_volume_tables.xml:$(TARGET_COPY_OUT_VENDOR)/etc/default_volume_tables.xml \
@@ -123,34 +120,18 @@ PRODUCT_COPY_FILES += \
 
 # Bluetooth
 PRODUCT_PACKAGES += \
-    vendor.qti.hardware.bluetooth_audio@2.1.vendor \
-    vendor.qti.hardware.btconfigstore@1.0.vendor \
-    vendor.qti.hardware.btconfigstore@2.0.vendor \
-    audio.bluetooth.default \
     android.hardware.bluetooth.audio-impl \
-    android.hardware.bluetooth@1.1.vendor
+    audio.bluetooth.default
 
 # Camera
 $(call soong_config_set,samsungCameraVars,needs_sec_reserved_field,true)
 
 PRODUCT_PACKAGES += \
-    android.hardware.camera.provider-service.samsung \
-    libgrallocusage.vendor \
-    vendor.qti.hardware.camera.device@1.0.vendor \
-    vendor.qti.hardware.camera.postproc@1.0.vendor \
-    libgui_vendor \
-    libcamera2ndk_vendor \
-    libpng.vendor
+    android.hardware.camera.provider-service.samsung
 
 # Configstore
 PRODUCT_PACKAGES += \
     disable_configstore
-
-# GNSS
-PRODUCT_PACKAGES += \
-    android.hardware.gnss.measurement_corrections@1.1.vendor \
-    android.hardware.gnss.visibility_control@1.0.vendor \
-    android.hardware.gnss@2.1.vendor
 
 # Graphics
 PRODUCT_AAPT_CONFIG := normal
@@ -163,39 +144,29 @@ PRODUCT_PACKAGES += \
     android.hardware.graphics.mapper@3.0-impl-qti-display \
     android.hardware.graphics.mapper@4.0-impl-qti-display \
     gralloc.kona \
-    libdisplayconfig.qti \
-    libdisplayconfig.system.qti \
-    libqdMetaData \
-    libqdMetaData.system \
-    libtinyxml \
-    libtinyxml2 \
-    vendor.display.config@1.0 \
-    vendor.display.config@1.0.vendor \
-    vendor.display.config@1.5 \
-    vendor.display.config@1.11.vendor \
-    vendor.display.config@2.0 \
-    vendor.display.config@2.0.vendor \
     vendor.qti.hardware.display.allocator-service \
     vendor.qti.hardware.display.composer-service \
-    vendor.qti.hardware.display.mapper@1.0.vendor \
-    vendor.qti.hardware.display.mapper@1.1.vendor \
-    vendor.qti.hardware.display.mapper@2.0.vendor \
-    vendor.qti.hardware.display.mapper@3.0.vendor \
-    vendor.qti.hardware.display.mapper@4.0.vendor \
-    vendor.qti.hardware.memtrack-service \
+    vendor.qti.hardware.memtrack-service
+
+ifneq ($(TARGET_IS_TABLET),true)
+PRODUCT_PACKAGES += \
     AdvancedDisplay
+endif
 
 # Doze
+ifneq ($(TARGET_IS_TABLET),true)
 PRODUCT_PACKAGES += \
     SamsungDoze
+endif
 
 # DRM
 PRODUCT_PACKAGES += \
     android.hardware.drm-service.clearkey \
-    libdrmclearkeyplugin \
-    android.hardware.drm@1.3.vendor
+    libdrmclearkeyplugin
 
-# fastbootd
+# Fastboot
+TARGET_BOARD_FASTBOOT_INFO_FILE := $(LOCAL_PATH)/fastboot-info.txt
+
 PRODUCT_PACKAGES += \
     fastbootd
 
@@ -205,12 +176,13 @@ PRODUCT_PACKAGES += \
 
 # Fingerprint
 PRODUCT_PACKAGES += \
-    android.hardware.biometrics.fingerprint-service.samsung \
-    android.hardware.common-V1-ndk_platform.vendor
+    android.hardware.biometrics.fingerprint-service.samsung
 
 # FlipFlap
+ifneq ($(TARGET_IS_TABLET),true)
 PRODUCT_PACKAGES += \
     FlipFlap
+endif
 
 # Gatekeeper
 PRODUCT_PACKAGES += \
@@ -220,19 +192,7 @@ PRODUCT_PACKAGES += \
 # Health
 PRODUCT_PACKAGES += \
     android.hardware.health-service.samsung \
-    android.hardware.health-service.samsung-recovery \
-    android.hardware.health@2.1.vendor
-
-# HIDL
-PRODUCT_PACKAGES += \
-    android.hidl.manager@1.0 \
-    android.hidl.manager@1.0.vendor \
-    android.hidl.base@1.0 \
-    android.hidl.base@1.0.vendor \
-    libhidltransport \
-    libhidltransport.vendor \
-    libhwbinder \
-    libhwbinder.vendor
+    android.hardware.health-service.samsung-recovery
 
 # HotwordEnrollement app permissions
 PRODUCT_COPY_FILES += \
@@ -246,9 +206,7 @@ PRODUCT_SET_DEBUGFS_RESTRICTIONS := true
 
 # Keymaster
 PRODUCT_PACKAGES += \
-    android.hardware.keymaster@4.0-service.samsung \
-    android.hardware.keymaster@4.1.vendor \
-	libkeymaster4_1support.vendor
+    android.hardware.keymaster@4.0-service.samsung
 
 # Lights
 PRODUCT_PACKAGES += \
@@ -259,8 +217,10 @@ PRODUCT_PACKAGES += \
     vendor.lineage.health-service.default
 
 # LiveDisplay
+ifneq ($(TARGET_IS_TABLET),true)
 PRODUCT_PACKAGES += \
     vendor.lineage.livedisplay@2.0-service.samsung-qcom.sm8250
+endif
 
 # Media
 PRODUCT_COPY_FILES += \
@@ -270,34 +230,12 @@ PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/media/media_profiles_kona.xml:$(TARGET_COPY_OUT_VENDOR)/etc/media_profiles_V1_0.xml \
     $(LOCAL_PATH)/configs/media/video_system_specs.json:$(TARGET_COPY_OUT_VENDOR)/etc/video_system_specs.json
 
-PRODUCT_PACKAGES += \
-    libcodec2_hidl@1.0.vendor \
-    libcodec2_vndk.vendor \
-    vendor.qti.hardware.capabilityconfigstore@1.0.vendor
+# Overlays
+DEVICE_PACKAGE_OVERLAYS += \
+    $(LOCAL_PATH)/overlay \
+    $(LOCAL_PATH)/overlay-lmodroid
 
-# Minijail
-PRODUCT_PACKAGES += \
-    libavservices_minijail \
-    libavservices_minijail.vendor
-
-# Net
-PRODUCT_PACKAGES += \
-    android.system.net.netd@1.1.vendor
-
-# Neural networks
-PRODUCT_PACKAGES += \
-    android.hardware.neuralnetworks@1.3.vendor
-
-# NFC
-PRODUCT_PACKAGES += \
-    android.hardware.nfc@1.2-service.samsung \
-    com.android.nfc_extras \
-    Tag
-
-# NFC configs
-PRODUCT_COPY_FILES += \
-    $(LOCAL_PATH)/configs/nfc/libnfc-sec-vendor.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libnfc-sec-vendor.conf \
-    $(LOCAL_PATH)/configs/nfc/libnfc-nci-SLSI.conf:$(TARGET_COPY_OUT_VENDOR)/etc/libnfc-nci-SLSI.conf
+PRODUCT_ENFORCE_RRO_TARGETS := *
 
 # Permissions
 PRODUCT_COPY_FILES += \
@@ -312,22 +250,14 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.camera.raw.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.camera.raw.xml \
     frameworks/native/data/etc/android.hardware.fingerprint.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.fingerprint.xml \
     frameworks/native/data/etc/android.hardware.location.gps.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.location.gps.xml \
-    frameworks/native/data/etc/android.hardware.nfc.hcef.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.hcef.xml \
-    frameworks/native/data/etc/android.hardware.nfc.hce.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.hce.xml \
-    frameworks/native/data/etc/android.hardware.nfc.uicc.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.uicc.xml \
-    frameworks/native/data/etc/android.hardware.nfc.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.nfc.xml \
     frameworks/native/data/etc/android.hardware.opengles.aep.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.opengles.aep.xml \
-    frameworks/native/data/etc/android.hardware.se.omapi.ese.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.se.omapi.ese.xml \
     frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.accelerometer.xml \
     frameworks/native/data/etc/android.hardware.sensor.compass.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.compass.xml \
     frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.gyroscope.xml \
     frameworks/native/data/etc/android.hardware.sensor.light.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.light.xml \
-    frameworks/native/data/etc/android.hardware.sensor.proximity.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.proximity.xml \
     frameworks/native/data/etc/android.hardware.sensor.stepcounter.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.stepcounter.xml \
     frameworks/native/data/etc/android.hardware.sensor.stepdetector.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.stepdetector.xml \
     frameworks/native/data/etc/android.hardware.strongbox_keystore.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.strongbox_keystore.xml \
-    frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.gsm.xml \
-    frameworks/native/data/etc/android.hardware.telephony.ims.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.ims.xml \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.usb.accessory.xml \
     frameworks/native/data/etc/android.hardware.usb.host.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.usb.host.xml \
@@ -344,83 +274,75 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.software.midi.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.midi.xml \
     frameworks/native/data/etc/android.software.sip.voip.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.sip.voip.xml \
     frameworks/native/data/etc/android.software.verified_boot.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.software.verified_boot.xml \
-    frameworks/native/data/etc/com.nxp.mifare.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/com.nxp.mifare.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/handheld_core_hardware.xml
+
+ifneq ($(TARGET_IS_TABLET),true)
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.sensor.proximity.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.sensor.proximity.xml
+endif
+
+ifneq ($(TARGET_IS_WIFI-ONLY),true)
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.se.omapi.ese.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.se.omapi.ese.xml \
+    frameworks/native/data/etc/android.hardware.telephony.gsm.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.gsm.xml \
+    frameworks/native/data/etc/android.hardware.telephony.ims.xml:$(TARGET_COPY_OUT_VENDOR)/etc/permissions/android.hardware.telephony.ims.xml
+endif
 
 # Power
 PRODUCT_PACKAGES += \
     android.hardware.power-service.pixel-libperfmgr \
-    android.hardware.power@1.2.vendor \
     libqti-perfd-client
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/power/powerhint.json:$(TARGET_COPY_OUT_VENDOR)/etc/powerhint.json
 
 # PowerShare
+ifneq ($(TARGET_IS_TABLET),true)
 PRODUCT_PACKAGES += \
     vendor.lineage.powershare@1.0-service.samsung
-
-# Protobuf
-PRODUCT_PACKAGES += \
-    libprotobuf-cpp-lite-3.9.1-vendorcompat \
-    libprotobuf-cpp-full-3.9.1-vendorcompat
+endif
 
 # Public libraries
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/public.libraries.txt:$(TARGET_COPY_OUT_VENDOR)/etc/public.libraries.txt
 
-# QMI
+# QTI fwk-detect
 PRODUCT_PACKAGES += \
-    libcurl.vendor \
-    libjson \
-    libjsoncpp.vendor \
-    libqti_vndfwk_detect \
-    libqti_vndfwk_detect.vendor \
-    libsqlite.vendor \
-    libvndfwk_detect_jni.qti \
-    libvndfwk_detect_jni.qti.vendor
+    libqti_vndfwk_detect.vendor:32
 
 # RIL
+ifneq ($(TARGET_IS_WIFI-ONLY),true)
 PRODUCT_PACKAGES += \
-    android.hardware.broadcastradio@1.0-impl \
-    android.hardware.radio@1.5.vendor \
-    android.hardware.radio.config@1.2.vendor \
-    android.hardware.radio.deprecated@1.0.vendor \
-    libnetutils.vendor \
-    libxml2 \
-    librilutils \
-    librmnetctl \
     libsecril-client \
     secril_config_svc \
     sehradiomanager
-
-# Secure Element
-PRODUCT_PACKAGES += \
-    android.hardware.secure_element@1.0.vendor \
-    libchrome.vendor
+endif
 
 # Sensors
 PRODUCT_PACKAGES += \
-    android.frameworks.sensorservice@1.0.vendor \
-    android.hardware.sensors-service.samsung-multihal \
-    android.hardware.sensors@2.0-ScopedWakelock.vendor \
-    libsensorndkbridge
+    android.hardware.sensors-service.samsung-multihal
 
 # Telephony
+ifneq ($(TARGET_IS_WIFI-ONLY),true)
 PRODUCT_PACKAGES += \
     telephony-ext
 
 PRODUCT_BOOT_JARS += \
     telephony-ext
+endif
 
-# Thermal
+# Tether
+ifneq ($(TARGET_IS_WIFI-ONLY),true)
 PRODUCT_PACKAGES += \
-    android.hardware.thermal@2.0.vendor \
-    android.frameworks.cameraservice.service@2.1.vendor
+    ipacm \
+    IPACM_cfg.xml
+endif
 
 # Touch features
+ifneq ($(TARGET_IS_TABLET),true)
 PRODUCT_PACKAGES += \
     vendor.lineage.touch@1.0-service.samsung_sm8250
+endif
 
 # Vibrator
 PRODUCT_PACKAGES += \
@@ -432,22 +354,11 @@ PRODUCT_PACKAGES += \
     init.qcom.usb.rc \
     init.qcom.usb.sh
 
-# Tether
-PRODUCT_PACKAGES += \
-    ipacm \
-    IPACM_cfg.xml
-
-# VNDK
-PRODUCT_PACKAGES += \
-    libcrypto-v33
-
 # WiFi
 PRODUCT_PACKAGES += \
     android.hardware.wifi-service \
     hostapd \
-    libwifi-hal \
     libwifi-hal-ctrl \
-    libwifi-hal-qcom \
     libwpa_client \
     WifiOverlay \
     wpa_cli \
