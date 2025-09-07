@@ -1,9 +1,11 @@
 [
   {
+    "remote": "lineage",
     "repository": "android_kernel_samsung_sm8250",
     "target_path": "kernel/samsung/sm8250"
   },
   {
+    "remote": "lineage",
     "repository": "android_hardware_samsung",
     "target_path": "hardware/samsung"
   }
